@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # 设置中文字体和样式
-plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['font.sans-serif'] = ['Noto Sans CJK SC']
 plt.rcParams['axes.unicode_minus'] = False
-sns.set_theme(style="whitegrid", font='SimHei')
+sns.set_theme(style="whitegrid", font='Noto Sans CJK SC')
 
 # 1. 数据加载与初始化
 data_dir = "/mnt/desktop/swufe_mcm/数据"
@@ -73,7 +73,10 @@ plt.figure(figsize=(10, 6))
 factor_stats.plot(kind='bar', ax=plt.gca())
 plt.title('不同市场与价格组的涨停次日平均收益', fontsize=14)
 plt.ylabel('平均收益率')
+plt.xlabel('市场分类')
 plt.xticks(rotation=0)
+plt.legend(title='价格分组')
+plt.tight_layout()
 plt.savefig("/mnt/desktop/swufe_mcm/Q1问题一/factor_analysis.png", dpi=150)
 
 print("Q1 Final 分析完成。")

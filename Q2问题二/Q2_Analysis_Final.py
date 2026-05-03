@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # 设置中文字体和样式
-plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['font.sans-serif'] = ['Noto Sans CJK SC']
 plt.rcParams['axes.unicode_minus'] = False
-sns.set_theme(style="whitegrid", font='SimHei')
+sns.set_theme(style="whitegrid", font='Noto Sans CJK SC')
 
 # 1. 数据加载与初始化
 data_dir = "/mnt/desktop/swufe_mcm/数据"
