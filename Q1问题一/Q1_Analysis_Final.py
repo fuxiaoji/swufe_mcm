@@ -65,6 +65,16 @@ main_df['Category'] = main_df['Next_Change'].apply(classify_main)
 main_res = main_df['Category'].value_counts(normalize=True).round(4)
 main_res.to_csv("/mnt/desktop/swufe_mcm/Q1问题一/main_probs_final.csv")
 
+# 绘制主板涨停次日分布图 (修复中文)
+plt.figure(figsize=(12, 6))
+sns.barplot(x=main_res.index, y=main_res.values, palette='viridis')
+plt.title('主板股票涨停次日收益率分布概率 (4位精度)', fontsize=14)
+plt.ylabel('出现频率')
+plt.xlabel('收益率区间')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig("/mnt/desktop/swufe_mcm/Q1问题一/main_dist.png", dpi=150)
+
 # 5. 多因子分组图：按价格区间看涨停溢价
 limit_up_df['Price_Group'] = pd.qcut(limit_up_df['Clsprc'], 3, labels=['低价', '中价', '高价'])
 factor_stats = limit_up_df.groupby(['Market', 'Price_Group'])['Next_Change'].mean().unstack().round(4)
