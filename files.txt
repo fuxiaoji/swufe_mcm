@@ -1,0 +1,40 @@
+[34mQ1问题一[39;49m[0m
+[34mQ2问题二[39;49m[0m
+[34mQ3问题三[39;49m[0m
+[34mQ4问题四[39;49m[0m
+files.txt
+[34mimages[39;49m[0m
+思路.md
+指数文件191338545(仅供西南财经大学使用).zip
+[34m数据[39;49m[0m
+数模论文_v1(1).docx
+模型汇总(1).docx
+论文.md
+题目.md
+
+./Q1问题一:
+Q1_涨停概率分析.ipynb
+
+./Q2问题二:
+
+./Q3问题三:
+
+./Q4问题四:
+
+./images:
+[34m题目[39;49m[0m
+
+./images/题目:
+1777780426305.png
+
+./数据:
+TRD_Dalyr 2.xlsx
+TRD_Dalyr.xlsx
+TRD_Dalyr1 2.xlsx
+TRD_Dalyr1.xlsx
+TRD_Dalyr[DES][xlsx] 2.txt
+TRD_Dalyr[DES][xlsx].txt
+TRD_Index.xlsx
+TRD_Index[DES][xlsx].txt
+版权声明 2.pdf
+版权声明.pdf
