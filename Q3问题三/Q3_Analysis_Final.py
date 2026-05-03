@@ -15,7 +15,7 @@ sns.set_theme(style="whitegrid", font='Noto Sans CJK SC')
 data_dir = "/mnt/desktop/swufe_mcm/数据"
 files = ["TRD_Dalyr.xlsx"]
 
-print("正在加载数据 (Q3 Final)...")
+print("正在加载数据 (Q3 Final Fix)...")
 df_list = []
 for f in files:
     path = os.path.join(data_dir, f)
@@ -60,7 +60,16 @@ gv_events = df[df['Golden_Valley'] == 1].copy()
 gv_events = gv_events.dropna(subset=['Ret_10d'])
 
 if not gv_events.empty:
-    # A. 生存分析
+    # A. 修复 return_10d_dist.png (直方图)
+    plt.figure(figsize=(10, 6))
+    sns.histplot(gv_events['Ret_10d'], bins=50, kde=True, color='salmon')
+    plt.axvline(0, color='red', linestyle='--')
+    plt.title('金山谷形态 10 日累积收益率分布直方图', fontsize=14)
+    plt.xlabel('10日累积收益率')
+    plt.ylabel('频数')
+    plt.savefig("/mnt/desktop/swufe_mcm/Q3问题三/return_10d_dist.png", dpi=150)
+
+    # B. 生存分析
     path_cols = [f'Ret_{i}d' for i in range(1, 11)]
     path_data = gv_events[path_cols].values
     durations = []
@@ -85,7 +94,7 @@ if not gv_events.empty:
     plt.tight_layout()
     plt.savefig("/mnt/desktop/swufe_mcm/Q3问题三/survival_analysis.png", dpi=150)
     
-    # B. K线案例可视化
+    # C. K线案例可视化
     sample_stk = gv_events.iloc[0]['Stkcd']
     sample_date = gv_events.iloc[0]['Trddt']
     case_df = df[df['Stkcd'] == sample_stk].copy()
@@ -108,7 +117,7 @@ if not gv_events.empty:
              title=f"Stock {sample_stk} Golden Valley Case", 
              savefig="/mnt/desktop/swufe_mcm/Q3问题三/kline_case.png")
 
-    # C. 保存 4 位精度结果
+    # D. 保存 4 位精度结果
     up_prob = (gv_events['Ret_10d'] > 0).mean()
     mean_ret = gv_events['Ret_10d'].mean()
     res_summary = pd.DataFrame({
@@ -116,4 +125,4 @@ if not gv_events.empty:
         'Value': [len(gv_events), round(up_prob, 4), round(mean_ret, 4), round(gv_events['Ret_10d'].median(), 4), round(gv_events['Ret_10d'].std(), 4)]
     })
     res_summary.to_csv("/mnt/desktop/swufe_mcm/Q3问题三/q3_summary_final.csv", index=False)
-    print("Q3 Final 分析完成。")
+    print("Q3 Final Fix 分析完成。")

@@ -13,7 +13,7 @@ sns.set_theme(style="whitegrid", font='Noto Sans CJK SC')
 data_dir = "/mnt/desktop/swufe_mcm/数据"
 files = ["TRD_Dalyr.xlsx"]
 
-print("正在加载数据 (Q2 Final)...")
+print("正在加载数据 (Q2 Final Fix)...")
 df_list = []
 for f in files:
     path = os.path.join(data_dir, f)
@@ -43,7 +43,16 @@ df['GC'] = (df['MA5'] > df['MA10']) & (df['Prev_MA5'] <= df['Prev_MA10'])
 df['Next_Return'] = df.groupby('Stkcd')['ChangeRatio'].shift(-1)
 gc_events = df[df['GC'] == 1].copy().dropna(subset=['Next_Return'])
 
-# 4. 可视化升级：小提琴图
+# 4. 修复 return_dist.png (直方图)
+plt.figure(figsize=(10, 6))
+sns.histplot(gc_events['Next_Return'], bins=50, kde=True, color='skyblue')
+plt.axvline(0, color='red', linestyle='--')
+plt.title('金叉策略次日收益率分布直方图', fontsize=14)
+plt.xlabel('收益率')
+plt.ylabel('频数')
+plt.savefig("/mnt/desktop/swufe_mcm/Q2问题二/return_dist.png", dpi=150)
+
+# 5. 可视化升级：小提琴图
 plt.figure(figsize=(10, 6))
 sns.violinplot(y=gc_events['Next_Return'], color='skyblue', inner='quartile')
 plt.axhline(0, color='red', linestyle='--')
@@ -51,7 +60,7 @@ plt.title('金叉策略次日收益率分布 (小提琴图)', fontsize=14)
 plt.ylabel('收益率')
 plt.savefig("/mnt/desktop/swufe_mcm/Q2问题二/violin_return.png", dpi=150)
 
-# 5. 4位精度统计
+# 6. 4位精度统计
 up_prob = (gc_events['Next_Return'] > 0).mean()
 mean_ret = gc_events['Next_Return'].mean()
 res_summary = pd.DataFrame({
@@ -60,4 +69,4 @@ res_summary = pd.DataFrame({
 })
 res_summary.to_csv("/mnt/desktop/swufe_mcm/Q2问题二/q2_summary_final.csv", index=False)
 
-print("Q2 Final 分析完成。")
+print("Q2 Final Fix 分析完成。")
