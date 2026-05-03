@@ -11,27 +11,11 @@ plt.rcParams['font.sans-serif'] = ['Noto Sans CJK SC']
 plt.rcParams['axes.unicode_minus'] = False
 sns.set_theme(style="whitegrid", font='Noto Sans CJK SC')
 
-# 1. 数据加载与初始化
-data_dir = "/mnt/desktop/swufe_mcm/数据"
-files = ["TRD_Dalyr.xlsx"]
-
-print("正在加载数据 (Q3 Final Fix)...")
-df_list = []
-for f in files:
-    path = os.path.join(data_dir, f)
-    if os.path.exists(path):
-        import warnings
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            df_tmp = pd.read_excel(path, skiprows=2, header=None, nrows=300000)
-            df_tmp.columns = ['Stkcd', 'Trddt', 'Opnprc', 'Hiprc', 'Loprc', 'Clsprc', 'Dretwd', 'Dretnd', 'PreClosePrice', 'ChangeRatio', 'LimitDown', 'LimitUp', 'LimitStatus']
-            df_list.append(df_tmp[['Stkcd', 'Trddt', 'Opnprc', 'Hiprc', 'Loprc', 'Clsprc', 'ChangeRatio']])
-
-df = pd.concat(df_list, ignore_index=True)
-df['Trddt'] = pd.to_datetime(df['Trddt'], errors='coerce')
-df = df.dropna(subset=['Trddt'])
-for col in ['Opnprc', 'Hiprc', 'Loprc', 'Clsprc', 'ChangeRatio']:
-    df[col] = pd.to_numeric(df[col], errors='coerce')
+# 1. 加载清洗后的数据
+data_path = "/mnt/desktop/swufe_mcm/数据/TRD_Dalyr_Cleaned.csv"
+print("正在加载清洗后的数据 (Q3 Final)...")
+df = pd.read_csv(data_path)
+df['Trddt'] = pd.to_datetime(df['Trddt'])
 df = df.sort_values(['Stkcd', 'Trddt'])
 
 # 2. 计算均线
@@ -60,11 +44,11 @@ gv_events = df[df['Golden_Valley'] == 1].copy()
 gv_events = gv_events.dropna(subset=['Ret_10d'])
 
 if not gv_events.empty:
-    # A. 修复 return_10d_dist.png (直方图)
+    # A. 修复 return_10d_dist.png
     plt.figure(figsize=(10, 6))
     sns.histplot(gv_events['Ret_10d'], bins=50, kde=True, color='salmon')
     plt.axvline(0, color='red', linestyle='--')
-    plt.title('金山谷形态 10 日累积收益率分布直方图', fontsize=14)
+    plt.title('金山谷形态 10 日累积收益率分布 (清洗后数据)', fontsize=14)
     plt.xlabel('10日累积收益率')
     plt.ylabel('频数')
     plt.savefig("/mnt/desktop/swufe_mcm/Q3问题三/return_10d_dist.png", dpi=150)
@@ -88,7 +72,7 @@ if not gv_events.empty:
     
     plt.figure(figsize=(10, 6))
     kmf.plot_survival_function()
-    plt.title("金山谷形态买入后 10 日生存分析 (Kaplan-Meier)", fontsize=14)
+    plt.title("金山谷形态买入后 10 日生存分析 (清洗后数据)", fontsize=14)
     plt.xlabel("持有天数")
     plt.ylabel("未破发概率")
     plt.tight_layout()
@@ -101,20 +85,16 @@ if not gv_events.empty:
     case_df = case_df[(case_df['Trddt'] >= sample_date - pd.Timedelta(days=40)) & 
                      (case_df['Trddt'] <= sample_date + pd.Timedelta(days=20))]
     case_df.set_index('Trddt', inplace=True)
-    case_df.columns = ['Stkcd', 'Open', 'High', 'Low', 'Close', 'Change', 'MA5', 'MA10', 'MA20', 'ψ510', 'ψ520', 'VC', 'GV'] + [f'R{i}' for i in range(1,11)]
+    case_df = case_df[['Opnprc', 'Hiprc', 'Loprc', 'Clsprc', 'MA5', 'MA10', 'MA20']]
+    case_df.columns = ['Open', 'High', 'Low', 'Close', 'MA5', 'MA10', 'MA20']
     
     add_plots = [
         mpf.make_addplot(case_df['MA5'], color='blue', width=0.8),
         mpf.make_addplot(case_df['MA10'], color='orange', width=0.8),
         mpf.make_addplot(case_df['MA20'], color='green', width=0.8)
     ]
-    signal_idx = case_df.index.get_loc(sample_date)
-    case_df['Signal_Marker'] = np.nan
-    case_df.iloc[signal_idx, case_df.columns.get_loc('Signal_Marker')] = case_df.iloc[signal_idx]['Low'] * 0.98
-    add_plots.append(mpf.make_addplot(case_df['Signal_Marker'], type='scatter', markersize=100, marker='^', color='red'))
-    
     mpf.plot(case_df, type='candle', style='charles', addplot=add_plots, 
-             title=f"Stock {sample_stk} Golden Valley Case", 
+             title=f"Stock {sample_stk} Golden Valley Case (Cleaned)", 
              savefig="/mnt/desktop/swufe_mcm/Q3问题三/kline_case.png")
 
     # D. 保存 4 位精度结果
@@ -125,4 +105,4 @@ if not gv_events.empty:
         'Value': [len(gv_events), round(up_prob, 4), round(mean_ret, 4), round(gv_events['Ret_10d'].median(), 4), round(gv_events['Ret_10d'].std(), 4)]
     })
     res_summary.to_csv("/mnt/desktop/swufe_mcm/Q3问题三/q3_summary_final.csv", index=False)
-    print("Q3 Final Fix 分析完成。")
+    print("Q3 分析完成。")

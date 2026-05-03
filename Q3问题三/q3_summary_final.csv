@@ -1,6 +1,6 @@
 Metric,Value
-Sample_Size,6906.0
-Up_Probability,0.5164
-Mean_Return,0.0104
-Median_Return,0.0032
-Std_Dev,0.0921
+Sample_Size,3651.0
+Up_Probability,0.4243
+Mean_Return,-0.0018
+Median_Return,-0.0118
+Std_Dev,0.0981
